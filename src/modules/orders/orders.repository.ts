@@ -1,17 +1,14 @@
-const ORDERS = [
-  {
-    clientName: 'Ana López',
-    items: [
-      { description: 'Ceviche', quantity: 2, unitPrice: 50 },
-      { description: 'Chicha morada', quantity: 1, unitPrice: 10 },
-    ],
-  },
-];
+import { Injectable, Inject } from '@nestjs/common';
+import { Order } from './entities/order.entity';
 
+@Injectable()
 export class OrdersRepository {
-  constructor() {}
+  constructor(
+    @Inject('ORDERS_REPOSITORY')
+    private ordersRepository: typeof Order,
+  ) {}
 
-  findAll(): Promise<any[]> {
-    return Promise.resolve(ORDERS);
+  async findAll(): Promise<Order[]> {
+    return this.ordersRepository.findAll<Order>();
   }
 }
