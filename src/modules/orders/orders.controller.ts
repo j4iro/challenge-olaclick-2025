@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 
 @Controller('orders')
@@ -6,7 +6,12 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  findAll(): Promise<any[]> {
-    return this.ordersService.findAll();
+  findActiveOrders(): Promise<any[]> {
+    return this.ordersService.findActiveOrders();
+  }
+
+  @Get(':id')
+  findOrderById(@Param('id') id: number): Promise<any> {
+    return this.ordersService.findOrderById(id);
   }
 }

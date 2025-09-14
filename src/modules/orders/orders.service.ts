@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { OrdersRepository } from './orders.repository';
+import { Order } from './entities/order.entity';
 
 @Injectable()
 export class OrdersService {
   constructor(private readonly ordersRepository: OrdersRepository) {}
 
-  findAll(): Promise<any[]> {
-    return this.ordersRepository.findAll();
+  findActiveOrders(): Promise<Order[]> {
+    return this.ordersRepository.findActiveOrders();
+  }
+
+  findOrderById(id: number): Promise<Order | null> {
+    return this.ordersRepository.findOrderById(id);
   }
 }

@@ -1,5 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Order } from './entities/order.entity';
+import { Op } from 'sequelize';
+import { OrderStatus } from './entities/order-status.enum';
 
 @Injectable()
 export class OrdersRepository {
@@ -8,7 +10,17 @@ export class OrdersRepository {
     private ordersRepository: typeof Order,
   ) {}
 
-  async findAll(): Promise<Order[]> {
-    return this.ordersRepository.findAll<Order>();
+  async findActiveOrders(): Promise<Order[]> {
+    return this.ordersRepository.findAll<Order>({
+      where: {
+        status: {
+          [Op.not]: OrderStatus.DELIVERED,
+        },
+      },
+    });
+  }
+
+  async findOrderById(id: number): Promise<Order | null> {
+    return this.ordersRepository.findByPk(id);
   }
 }

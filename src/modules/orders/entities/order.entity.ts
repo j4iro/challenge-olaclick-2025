@@ -1,4 +1,6 @@
-import { Table, Column, Model } from 'sequelize-typescript';
+import { Table, Column, Model, Default } from 'sequelize-typescript';
+import { DataType } from 'sequelize-typescript';
+import { OrderStatus } from './order-status.enum';
 
 @Table
 export class Order extends Model {
@@ -14,6 +16,10 @@ export class Order extends Model {
   }[];
   */
 
-  @Column
-  status: string;
+  @Default(OrderStatus.INITIATED)
+  @Column({
+    type: DataType.ENUM(...Object.values(OrderStatus)),
+    allowNull: false,
+  })
+  status: OrderStatus;
 }
