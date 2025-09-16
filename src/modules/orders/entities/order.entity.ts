@@ -1,20 +1,12 @@
-import { Table, Column, Model, Default } from 'sequelize-typescript';
+import { Table, Column, Model, Default, HasMany } from 'sequelize-typescript';
 import { DataType } from 'sequelize-typescript';
 import { OrderStatus } from './order-status.enum';
+import { OrderItems } from './order-items.entity';
 
 @Table
 export class Order extends Model {
   @Column
   clientName: string;
-
-  /*
-  @Column
-  items: {
-    description: string;
-    quantity: number;
-    unitPrice: number;
-  }[];
-  */
 
   @Default(OrderStatus.INITIATED)
   @Column({
@@ -22,4 +14,10 @@ export class Order extends Model {
     allowNull: false,
   })
   status: OrderStatus;
+
+  @HasMany(() => OrderItems, {
+    onDelete: 'CASCADE',
+    hooks: true,
+  })
+  items: OrderItems[];
 }

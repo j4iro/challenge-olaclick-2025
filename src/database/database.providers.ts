@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize-typescript';
 import { Order } from '../modules/orders/entities/order.entity';
+import { OrderItems } from '../modules/orders/entities/order-items.entity';
 
 export const databaseProviders = [
   {
@@ -13,7 +14,7 @@ export const databaseProviders = [
         password: 'password',
         database: 'olaclick',
       });
-      sequelize.addModels([Order]);
+      sequelize.addModels([Order, OrderItems]);
       await sequelize.sync();
       return sequelize;
     },
