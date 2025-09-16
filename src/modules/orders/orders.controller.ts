@@ -12,12 +12,17 @@ export class OrdersController {
   }
 
   @Get(':id')
-  findOrderById(@Param('id') id: number): Promise<any> {
+  findOrderById(@Param('id') id: number) {
     return this.ordersService.findOrderById(id);
   }
 
   @Post()
-  createOrder(@Body() order: CreateOrderDto): Promise<any> {
+  createOrder(@Body() order: CreateOrderDto) {
     return this.ordersService.createOrder(order);
+  }
+
+  @Post(':id/advance')
+  async advanceOrderStatus(@Param('id') id: number) {
+    return this.ordersService.advanceOrderStatus(id);
   }
 }

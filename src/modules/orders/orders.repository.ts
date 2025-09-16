@@ -18,11 +18,19 @@ export class OrdersRepository {
           [Op.not]: OrderStatus.DELIVERED,
         },
       },
+      include: [OrderItems],
+      order: [['createdAt', 'DESC']],
+      attributes: ['id', 'clientName', 'status', 'createdAt'],
     });
   }
 
-  async findOrderById(id: number): Promise<Order | null> {
-    return this.ordersRepository.findByPk(id);
+  async findOrderById(
+    id: number,
+    { includeItems = false }: { includeItems?: boolean } = {},
+  ): Promise<Order | null> {
+    return this.ordersRepository.findByPk(id, {
+      include: includeItems ? [OrderItems] : [],
+    });
   }
 
   async createOrder(order: {
@@ -31,6 +39,19 @@ export class OrdersRepository {
   }): Promise<Order> {
     return this.ordersRepository.create(order, {
       include: [OrderItems],
+    });
+  }
+
+  async updateStatus(id: number, status: OrderStatus): Promise<any> {
+    return this.ordersRepository.update(
+      { status },
+      { where: { id }, returning: true },
+    );
+  }
+
+  async deleteOrder(id: number): Promise<number> {
+    return this.ordersRepository.destroy({
+      where: { id },
     });
   }
 }
