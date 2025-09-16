@@ -4,9 +4,10 @@ import { OrdersService } from './orders.service';
 import { DatabaseModule } from 'src/database/database.module';
 import { ordersProviders } from './orders.provider';
 import { OrdersRepository } from './orders.repository';
+import { CacheModule } from 'src/cache/cache.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, CacheModule],
   controllers: [OrdersController],
   providers: [OrdersService, OrdersRepository, ...ordersProviders],
 })

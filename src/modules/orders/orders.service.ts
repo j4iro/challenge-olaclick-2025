@@ -7,13 +7,35 @@ import { OrdersRepository } from './orders.repository';
 import { Order } from './entities/order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderStatus } from './entities/order-status.enum';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly ordersRepository: OrdersRepository) {}
+  private readonly ACTIVE_ORDERS_CACHE_KEY = 'active_orders';
+  private readonly CACHE_TTL = 30 * 1000;
 
-  findActiveOrders(): Promise<Order[]> {
-    return this.ordersRepository.findActiveOrders();
+  constructor(
+    private readonly ordersRepository: OrdersRepository,
+    private readonly cacheService: CacheService,
+  ) {}
+
+  async findActiveOrders(): Promise<Order[]> {
+    const cachedOrders = await this.cacheService.get<Order[]>(
+      this.ACTIVE_ORDERS_CACHE_KEY,
+    );
+
+    if (cachedOrders) {
+      return cachedOrders;
+    }
+
+    const orders = await this.ordersRepository.findActiveOrders();
+    await this.cacheService.set(
+      this.ACTIVE_ORDERS_CACHE_KEY,
+      orders,
+      this.CACHE_TTL,
+    );
+
+    return orders;
   }
 
   async findOrderById(id: number): Promise<Order | null> {
@@ -24,8 +46,10 @@ export class OrdersService {
     return order;
   }
 
-  createOrder(order: CreateOrderDto): Promise<any> {
-    return this.ordersRepository.createOrder(order);
+  async createOrder(order: CreateOrderDto): Promise<any> {
+    const result = await this.ordersRepository.createOrder(order);
+    await this.cacheService.del(this.ACTIVE_ORDERS_CACHE_KEY);
+    return result;
   }
 
   async advanceOrderStatus(id: number): Promise<Order | { message: string }> {
@@ -42,10 +66,12 @@ export class OrdersService {
 
     if (nextStatus === null) {
       await this.ordersRepository.deleteOrder(id);
+      await this.cacheService.del(this.ACTIVE_ORDERS_CACHE_KEY);
       return { message: 'Order completed and removed from database' };
     }
 
     await this.ordersRepository.updateStatus(id, nextStatus);
+    await this.cacheService.del(this.ACTIVE_ORDERS_CACHE_KEY);
 
     const updatedOrder = await this.ordersRepository.findOrderById(id);
     return updatedOrder!;
