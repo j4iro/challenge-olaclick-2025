@@ -101,12 +101,28 @@ curl -X GET http://localhost:3000/orders
   {
     "id": 1,
     "clientName": "Ana López",
+    "items": [
+      {
+        "id": 1,
+        "description": "Ceviche",
+        "quantity": 2,
+        "unitPrice": 50
+      }
+    ],
     "status": "initiated",
     "createdAt": "2025-09-16T10:00:00.000Z"
   },
   {
     "id": 2,
     "clientName": "Carlos Ruiz",
+    "items": [
+      {
+        "id": 2,
+        "description": "Chicha morada",
+        "quantity": 1,
+        "unitPrice": 10
+      }
+    ],
     "status": "sent",
     "createdAt": "2025-09-16T09:45:00.000Z"
   }
@@ -277,22 +293,31 @@ src/
 
 ## 🧪 Pruebas
 
-### Ejecutar pruebas unitarias
+La aplicación incluye pruebas automatizadas para garantizar la funcionalidad correcta de los endpoints.
+
+### Pruebas E2E (End-to-End)
+
+Se incluye un test e2e completo para el endpoint de health check que verifica:
+
+- El estado HTTP 200
+- La estructura correcta de la respuesta
+- Los tipos de datos apropiados
+- El formato ISO del timestamp
+
+### Comandos de pruebas
 
 ```bash
+# Ejecutar pruebas unitarias
 npm run test
-```
 
-### Ejecutar pruebas e2e
-
-```bash
+# Ejecutar pruebas e2e (requiere base de datos activa)
 npm run test:e2e
 ```
 
-### Ejecutar pruebas con cobertura
+**Nota importante:** Las pruebas e2e requieren que PostgreSQL y Redis estén ejecutándose. Si usas Docker Compose, ejecuta primero:
 
 ```bash
-npm run test:cov
+docker-compose up -d postgres redis
 ```
 
 ## 🐳 Docker

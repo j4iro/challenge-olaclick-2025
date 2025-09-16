@@ -4,16 +4,24 @@ import { OrdersService } from './orders.service';
 import { OrdersRepository } from './orders.repository';
 import { OrderStatus } from './entities/order-status.enum';
 import { Order } from './entities/order.entity';
+import { CacheService } from 'src/cache/cache.service';
 
 describe('OrdersService', () => {
   let service: OrdersService;
   let repository: jest.Mocked<OrdersRepository>;
+  let cacheService: jest.Mocked<CacheService>;
 
   beforeEach(async () => {
     const mockRepository = {
       findOrderById: jest.fn(),
       updateStatus: jest.fn(),
       deleteOrder: jest.fn(),
+    };
+
+    const mockCacheService = {
+      get: jest.fn(),
+      set: jest.fn(),
+      del: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -23,11 +31,16 @@ describe('OrdersService', () => {
           provide: OrdersRepository,
           useValue: mockRepository,
         },
+        {
+          provide: CacheService,
+          useValue: mockCacheService,
+        },
       ],
     }).compile();
 
     service = module.get<OrdersService>(OrdersService);
     repository = module.get(OrdersRepository);
+    cacheService = module.get(CacheService);
 
     jest.clearAllMocks();
   });
