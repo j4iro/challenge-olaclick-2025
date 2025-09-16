@@ -386,8 +386,6 @@ docker-compose up --build
 - Velocidad extrema (operaciones en memoria)
 - Estructuras de datos avanzadas
 - Persistencia configurable
-- Pub/Sub para eventos en tiempo real
-- Cluster mode para alta disponibilidad
 
 **Alternativas:**
 
