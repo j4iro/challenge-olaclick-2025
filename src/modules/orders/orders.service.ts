@@ -10,12 +10,6 @@ import { OrderStatus } from './entities/order-status.enum';
 
 @Injectable()
 export class OrdersService {
-  private readonly STATUS_TRANSITIONS = new Map([
-    [OrderStatus.INITIATED, OrderStatus.SENT],
-    [OrderStatus.SENT, OrderStatus.DELIVERED],
-    [OrderStatus.DELIVERED, null], // null = delete from database
-  ]);
-
   constructor(private readonly ordersRepository: OrdersRepository) {}
 
   findActiveOrders(): Promise<Order[]> {
@@ -40,7 +34,7 @@ export class OrdersService {
     if (!order) throw new NotFoundException(`Order with ID ${id} not found`);
 
     const currentStatus = order.status;
-    const nextStatus = this.STATUS_TRANSITIONS.get(currentStatus);
+    const nextStatus = this.getNextStatus(currentStatus);
 
     if (nextStatus === undefined) {
       throw new BadRequestException(`Invalid current status: ${currentStatus}`);
@@ -55,5 +49,15 @@ export class OrdersService {
 
     const updatedOrder = await this.ordersRepository.findOrderById(id);
     return updatedOrder!;
+  }
+
+  private getNextStatus(currentStatus: OrderStatus): OrderStatus | null {
+    const STATUS_TRANSITIONS = new Map([
+      [OrderStatus.INITIATED, OrderStatus.SENT],
+      [OrderStatus.SENT, OrderStatus.DELIVERED],
+      [OrderStatus.DELIVERED, null], // null = delete from database
+    ]);
+
+    return STATUS_TRANSITIONS.get(currentStatus) ?? null;
   }
 }
