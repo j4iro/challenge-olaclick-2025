@@ -362,10 +362,8 @@ docker-compose up --build
 
 ### ¿Cómo desacoplarías la lógica de negocio del framework NestJS?
 
-1. **Capa de Dominio**: Crear entidades de dominio puras sin dependencias del framework
-2. **Puertos y Adaptadores**: Implementar interfaces para repositorios y servicios externos
-3. **Casos de Uso**: Separar la lógica de negocio en casos de uso independientes
-4. **Inversión de Dependencias**: Usar interfaces para desacoplar implementaciones concretas
+1. **Casos de Uso**: Separar la lógica de negocio en casos de uso independientes
+2. **Arquitectura hexagonal**: Separar la lógica de negocio de la infraestructura
 
 ### ¿Cómo escalarías esta API para soportar miles de órdenes concurrentes?
 
@@ -394,9 +392,6 @@ docker-compose up --build
 **Alternativas:**
 
 - **Memcached**: Más simple, mejor para cache puro
-- **Hazelcast**: Cache distribuido con capacidades de computación
-- **Apache Ignite**: Plataforma de datos en memoria
-- **Database Cache**: Cache a nivel de base de datos (PostgreSQL shared_buffers)
 
 ## 📝 Scripts Disponibles
 
